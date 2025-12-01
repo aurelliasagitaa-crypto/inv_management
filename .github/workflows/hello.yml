@@ -1,0 +1,26 @@
+name: Hello World Workflow
+
+on:
+  push:
+    branches: [ main ]   # Sesuaikan dengan branch default di repo kamu
+
+# trigger test
+jobs:
+  greeting:
+    runs-on: ubuntu-latest   # Pakai runner GitHub
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Say Hello
+        run: echo "Hello, World! 👋"
+
+      - name: Show Date and Time
+        run: echo "Current time is $(date) ⏱"
+
+      - name: Show GitHub Info
+        run: |
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
