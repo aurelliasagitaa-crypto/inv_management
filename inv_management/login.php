@@ -27,7 +27,7 @@ if (isset($_POST['login'])) {
             $error = "Password salah!";
         }
     } else {
-        $error = "Username tidak ditemukan atau akun tidak aktif!";
+        $error = "Usn salah";
     }
 }
 ?>
