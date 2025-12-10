@@ -1,5 +1,4 @@
 <?php
-// Hapus session_start() karena sudah ada di config.php
 include 'config.php';
 
 // Cek jika user belum login
@@ -7,6 +6,19 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+
+// Fungsi untuk hitung total record dengan prepared statement
+function countTable($conn, $table) {
+    $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM $table");
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['total'] ?? 0;
+}
+
+$inv_total = countTable($conn, 'inventory');
+$cat_total = countTable($conn, 'categories');
+$sup_total = countTable($conn, 'suppliers');
+$user_total = countTable($conn, 'users');
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +36,7 @@ if (!isset($_SESSION['user_id'])) {
             <a class="navbar-brand" href="dashboard.php">🏪 INV Management</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
-                    Welcome, <?= $_SESSION['full_name'] ?> (<?= $_SESSION['role'] ?>)
+                    Welcome, <?= htmlspecialchars($_SESSION['full_name']) ?> (<?= htmlspecialchars($_SESSION['role']) ?>)
                 </span>
                 <a href="logout.php" class="btn btn-outline-light btn-sm">Logout</a>
             </div>
@@ -34,58 +46,54 @@ if (!isset($_SESSION['user_id'])) {
     <div class="container mt-4">
         <h2>Dashboard</h2>
 
-        <div class="row mt-4">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary">
+        <div class="row mt-4 g-3">
+            <!-- Inventory -->
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-primary h-100">
                     <div class="card-body">
                         <h5>📦 Inventory</h5>
-                        <?php
-                        $inv_count = mysqli_query($conn, "SELECT COUNT(*) as total FROM inventory");
-                        $inv = mysqli_fetch_assoc($inv_count);
-                        ?>
-                        <h3><?= $inv['total'] ?></h3>
+                        <h3><?= $inv_total ?></h3>
+                    </div>
+                    <div class="card-footer">
                         <a href="inventory_read.php" class="text-white">View Items</a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card text-white bg-success">
+            <!-- Categories -->
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-success h-100">
                     <div class="card-body">
                         <h5>🏷️ Categories</h5>
-                        <?php
-                        $cat_count = mysqli_query($conn, "SELECT COUNT(*) as total FROM categories");
-                        $cat = mysqli_fetch_assoc($cat_count);
-                        ?>
-                        <h3><?= $cat['total'] ?></h3>
+                        <h3><?= $cat_total ?></h3>
+                    </div>
+                    <div class="card-footer">
                         <a href="categories_read.php" class="text-white">View Categories</a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card text-white bg-warning">
+            <!-- Suppliers -->
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-warning h-100">
                     <div class="card-body">
                         <h5>🚚 Suppliers</h5>
-                        <?php
-                        $sup_count = mysqli_query($conn, "SELECT COUNT(*) as total FROM suppliers");
-                        $sup = mysqli_fetch_assoc($sup_count);
-                        ?>
-                        <h3><?= $sup['total'] ?></h3>
+                        <h3><?= $sup_total ?></h3>
+                    </div>
+                    <div class="card-footer">
                         <a href="suppliers_read.php" class="text-white">View Suppliers</a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3">
-                <div class="card text-white bg-info">
+            <!-- Users -->
+            <div class="col-md-3 col-sm-6">
+                <div class="card text-white bg-info h-100">
                     <div class="card-body">
                         <h5>👥 Users</h5>
-                        <?php
-                        $user_count = mysqli_query($conn, "SELECT COUNT(*) as total FROM users");
-                        $user = mysqli_fetch_assoc($user_count);
-                        ?>
-                        <h3><?= $user['total'] ?></h3>
+                        <h3><?= $user_total ?></h3>
+                    </div>
+                    <div class="card-footer">
                         <a href="users_read.php" class="text-white">View Users</a>
                     </div>
                 </div>
