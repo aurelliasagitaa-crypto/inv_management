@@ -1,12 +1,11 @@
 <?php
-// Cek jika session belum started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+$host = "mysql";
+$user = "inventory_user";
+$pass = "inventory_pass";
+$db   = "inventory_db";
 
-$conn = mysqli_connect("localhost", "root", "", "inv_management");
+$conn = mysqli_connect($host, $user, $pass, $db);
 
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
-?>

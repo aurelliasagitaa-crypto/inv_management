@@ -1,23 +1,24 @@
 <?php
-// Hapus session_start() di login.php karena sudah ada di config.php
-include 'config.php';
+include 'config.php'; // config sudah punya session_start()
 
 if (isset($_POST['login'])) {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
 
-    $query = "SELECT * FROM users WHERE username = '$username' AND is_active = 1";
+    // Ambil user berdasarkan username & status aktif
+    $query = "SELECT * FROM users WHERE username = '$username' AND is_active = 1 LIMIT 1";
     $result = mysqli_query($conn, $query);
 
-    if (mysqli_num_rows($result) == 1) {
+    if ($result && mysqli_num_rows($result) === 1) {
         $user = mysqli_fetch_assoc($result);
 
-        // Verify password (for demo, using simple comparison)
-        // Untuk testing, kita gunakan password plain text dulu
-        if ($password === 'password') { // Ganti dengan password_verify nanti
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
+        // Verifikasi password asli menggunakan password_verify()
+        if (password_verify($password, $user['password'])) {
+
+            // Set session user
+            $_SESSION['user_id']   = $user['user_id'];
+            $_SESSION['username']  = $user['username'];
+            $_SESSION['role']      = $user['role'];
             $_SESSION['full_name'] = $user['full_name'];
 
             header("Location: dashboard.php");
@@ -26,7 +27,7 @@ if (isset($_POST['login'])) {
             $error = "Password salah!";
         }
     } else {
-        $error = "Username tidak ditemukan!";
+        $error = "Username tidak ditemukan atau akun tidak aktif!";
     }
 }
 ?>
@@ -57,10 +58,12 @@ if (isset($_POST['login'])) {
                                 <label class="form-label">Username</label>
                                 <input type="text" name="username" class="form-control" required>
                             </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Password</label>
                                 <input type="password" name="password" class="form-control" required>
                             </div>
+
                             <button type="submit" name="login" class="btn btn-primary w-100">Login</button>
                         </form>
 
@@ -69,6 +72,7 @@ if (isset($_POST['login'])) {
                                 admin / password<br>
                                 staff1 / password</small>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -77,3 +81,4 @@ if (isset($_POST['login'])) {
 </body>
 
 </html>
+
