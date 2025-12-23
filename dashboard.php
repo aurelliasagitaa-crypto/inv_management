@@ -1,6 +1,8 @@
 <?php
 // Hapus session_start() karena sudah ada di config.php
 include 'config.php';
+// update dashboard view
+include 'config.php';
 
 // Cek jika user belum login
 if (!isset($_SESSION['user_id'])) {
