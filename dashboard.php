@@ -4,6 +4,7 @@ include 'config.php';
 // update dashboard view
 include 'config.php';
 
+
 // Cek jika user belum login
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
